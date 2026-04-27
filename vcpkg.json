@@ -1,0 +1,47 @@
+{
+  "name" : "vklearn",
+  "version-string" : "1.0.0",
+  "builtin-baseline" : "6acb6ae25b2a70437436a3b23e3e9a427fca18a3",
+  "dependencies" : [ {
+    "name" : "sdl3",
+    "features" : [ "vulkan" ],
+    "version>=" : "3.4.0"
+  }, {
+    "name" : "spdlog",
+    "version>=" : "1.17.0"
+  }, {
+    "name" : "vulkan",
+    "version>=" : "2023-12-17"
+  }, {
+    "name" : "vulkan-sdk-components",
+    "version>=" : "1.4.328.0"
+  }, {
+    "name" : "glm",
+    "version>=" : "1.0.3"
+  }, {
+    "name" : "vulkan-memory-allocator",
+    "version>=" : "3.3.0"
+  }, {
+    "name" : "vk-bootstrap",
+    "version>=" : "1.4.328"
+  }, {
+    "name" : "imgui",
+    "features" : [ "vulkan-binding", "sdl3-binding", "docking-experimental", "freetype" ],
+    "version>=" : "1.91.9"
+  }, {
+    "name" : "tinyobjloader",
+    "version>=" : "2.0.0rc13"
+  }, {
+    "name" : "structopt",
+    "version>=" : "0.1.3"
+  }, {
+    "name" : "fastgltf",
+    "version>=" : "0.9.0"
+  }, {
+    "name" : "stb",
+    "version>=" : "2024-07-29#1"
+  }, {
+    "name" : "ktx",
+    "version>=" : "4.4.2"
+  } ]
+}

@@ -1,0 +1,51 @@
+#include "input_structures.hlsl"
+
+[[vk::binding(0, 1)]] Texture2D<float> displacementMap;
+[[vk::binding(1, 1)]] SamplerState textureSampler;
+
+struct PatchTess {
+    float EdgeTess[4] : SV_TessFactor;
+    float InsideTess[2]  : SV_InsideTessFactor;
+};
+
+struct HS_OUTPUT {
+    float3 PosL : POSITION;
+    float2 TexUV : TEXCOORD2;
+};
+
+struct DS_OUTPUT {
+    float4 PosH : SV_POSITION;
+    [[vk::location(0)]] float4 PosL : TEXCOORD0;
+    [[vk::location(1)]] float2 TexUV : TEXCOORD2;
+};
+
+[domain("quad")]
+DS_OUTPUT main(PatchTess patchTess,
+                 float2 uv : SV_DomainLocation,
+                 const OutputPatch<HS_OUTPUT, 4> quad) {
+    DS_OUTPUT dout;
+
+    float3 p0 = quad[0].PosL;
+    float3 p1 = quad[1].PosL;
+    float3 p2 = quad[2].PosL;
+    float3 p3 = quad[3].PosL;
+
+    float2 uv0 = quad[0].TexUV;
+    float2 uv1 = quad[1].TexUV;
+    float2 uv2 = quad[2].TexUV;
+    float2 uv3 = quad[3].TexUV;
+
+    float3 bottomPos = lerp(p0, p1, uv.x);
+    float3 topPos    = lerp(p2, p3, uv.x);
+    float3 vertexPosition = lerp(bottomPos, topPos, uv.y);
+
+    float2 bottomTex = lerp(uv0, uv1, uv.x);
+    float2 topTex    = lerp(uv2, uv3, uv.x);
+    float2 finalTexUV = lerp(bottomTex, topTex, uv.y);
+
+    float height = displacementMap.SampleLevel(textureSampler, finalTexUV, 0);
+    vertexPosition.z += height * 10.0f;
+
+    dout.PosH = mul(float4(vertexPosition, 1.0f), SceneUniformData.viewProj);
+    return dout;
+}

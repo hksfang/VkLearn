@@ -1,0 +1,26 @@
+[[vk::binding(0, 0)]] RWTexture2D<half4> OutputImage;
+
+struct PushConstantsStruct {
+    float4 data1;
+    float4 data2;
+    float4 data3;
+    float4 data4;
+};
+
+[[vk::push_constant]]
+PushConstantsStruct PushConstants;
+
+[numthreads(16, 16, 1)]
+void main(
+    uint3 GlobalID : SV_DispatchThreadID
+) {
+    int2 texelCoord = int2(GlobalID.xy);
+    uint width, height;
+    OutputImage.GetDimensions(width, height);
+    float4 topColor = PushConstants.data1;
+    float4 bottomColor = PushConstants.data2;
+
+    float blend = float(texelCoord.y) / height;
+    OutputImage[texelCoord] = lerp(topColor, bottomColor, blend);
+
+}

@@ -1,0 +1,20 @@
+[[vk::binding(0, 0)]] RWTexture2D<half4> OutputImage;
+
+[numthreads(16, 16, 1)]
+void main(
+    uint3 GlobalID : SV_DispatchThreadID,
+    uint3 LocalID : SV_GroupThreadID
+) {
+    int2 texelCoord = int2(GlobalID.xy);
+    uint width, height;
+    OutputImage.GetDimensions(width, height);
+    int2 size = int2(width, height);
+    if (texelCoord.x < size.x && texelCoord.y < size.y) {
+        half4 color = half4(0.0f, 0.0f, 0.0f, 1.0f);
+        if (LocalID.x != 0 && LocalID.y != 0) {
+            color.r = half(GlobalID.x) / width;
+            color.g = half(GlobalID.y) / height;
+        }
+        OutputImage[texelCoord] = color;
+    }
+}

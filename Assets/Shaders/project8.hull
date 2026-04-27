@@ -1,0 +1,41 @@
+struct VS_OUTPUT {
+    [[vk::location(0)]] float4 PosL : TEXCOORD0;
+    [[vk::location(2)]] float2 TexUV : TEXCOORD2;
+};
+
+struct PatchTess {
+    float EdgeTess[4] : SV_TessFactor;
+    float InsideTess[2]  : SV_InsideTessFactor;
+};
+
+struct HS_OUTPUT {
+    float3 PosL : POSITION;
+    float2 TexUV : TEXCOORD2;
+};
+
+PatchTess ConstantHS(InputPatch<VS_OUTPUT, 4> patch, uint patchID : SV_PrimitiveID) {
+    PatchTess pt;
+
+    float tessFactor = 64.0f;
+
+    pt.EdgeTess[0] = tessFactor;
+    pt.EdgeTess[1] = tessFactor;
+    pt.EdgeTess[2] = tessFactor;
+    pt.EdgeTess[3] = tessFactor;
+    pt.InsideTess[0]  = tessFactor;
+    pt.InsideTess[1]  = tessFactor;
+
+    return pt;
+}
+
+[domain("quad")]
+[partitioning("integer")]
+[outputtopology("triangle_cw")]
+[outputcontrolpoints(4)]
+[patchconstantfunc("ConstantHS")]
+HS_OUTPUT main(InputPatch<VS_OUTPUT, 4> p, uint i : SV_OutputControlPointID) {
+    HS_OUTPUT hout;
+    hout.PosL = p[i].PosL.xyz;
+    hout.TexUV = p[i].TexUV;
+    return hout;
+}
